@@ -19,7 +19,7 @@ npm run build
 npm run preview
 ```
 
-Production files are in `dist/`. Relative asset paths support GitHub Pages project sites. No server, account, API keys, or ongoing local process is needed once hosted. Fonts load from Google Fonts with system fallbacks; all JavaScript is bundled.
+Production files are in `dist/`. Relative asset paths support GitHub Pages project sites. No server, account, API keys, or ongoing local process is needed once hosted. The interface uses system fonts; all JavaScript is bundled.
 
 ## Publishing
 
