@@ -19,7 +19,7 @@ npm run build
 npm run preview
 ```
 
-Production files are in `dist/`. Relative asset paths support GitHub Pages project sites. No server, account, API keys, or ongoing local process is needed once hosted. The interface uses system fonts; all JavaScript is bundled.
+Production files are in `dist/`. Relative asset paths support GitHub Pages project sites. No server, account, API keys, or ongoing local process is needed once hosted. Space Grotesk and Cormorant Garamond are bundled locally alongside the JavaScript. A small 3D Manhattan-inspired miniature accompanies the America/New_York timezone; it uses the browser timezone, not GPS or location permission.
 
 ## Publishing
 

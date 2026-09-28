@@ -3,10 +3,17 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { clockAngles } from './clock.js';
+import '@fontsource/cormorant-garamond/500-italic.css';
+import '@fontsource/space-grotesk/400.css';
+import '@fontsource/space-grotesk/500.css';
+import { mountNewYork } from './city.js';
 import './style.css';
 
 const canvas=document.querySelector('#watch'), loading=document.querySelector('#loading');
 function updateReadout(date){document.querySelector('#digital').textContent=date.toLocaleTimeString([], {hour12:false});document.querySelector('#zone').textContent=Intl.DateTimeFormat().resolvedOptions().timeZone.replaceAll('_',' ');}
+const isNewYork = Intl.DateTimeFormat().resolvedOptions().timeZone === 'America/New_York';
+document.querySelector('#city-miniature').hidden = !isNewYork;
+if (isNewYork) { try { mountNewYork(document.querySelector('#city')); } catch (error) { document.querySelector('#city').hidden = true; console.warn('City miniature unavailable', error); } }
 updateReadout(new Date());setInterval(()=>updateReadout(new Date()),1000);
 try { init(); } catch(error){console.error(error);loading.textContent='The 3D view could not start. Please enable hardware acceleration or try a browser with WebGL support. Your local time is still shown.';}
 function init(){
@@ -32,7 +39,7 @@ const crown=disk(.28,.38,steel,model,2.18,0,.02);crown.rotation.z=Math.PI/2;for(
 ring(1.91,.23,.07,dark,model,0,0,.43);
 for(let i=0;i<60;i++){const a=i*Math.PI/30;const major=i%5===0;const mark=box(major?.065:.022,major?.22:.085,.035,major?lume:brass,model,Math.sin(a)*1.79,Math.cos(a)*1.79,.485,.009);mark.rotation.z=-a;}
 // Ring numerals are textures on small transparent planes, retaining depth and crispness.
-for(const [text,a] of [['12',0],['3',Math.PI/2],['6',Math.PI],['9',Math.PI*1.5]]){const c=document.createElement('canvas');c.width=c.height=128;const ctx=c.getContext('2d');ctx.font='500 66px Georgia';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#ddd9c8';ctx.fillText(text,64,68);const mat=new T.MeshBasicMaterial({map:new T.CanvasTexture(c),transparent:true,depthWrite:false});mesh(new T.PlaneGeometry(.33,.33),mat,model,Math.sin(a)*1.47,Math.cos(a)*1.47,.49);}
+for(const [text,a] of [['12',0],['3',Math.PI/2],['6',Math.PI],['9',Math.PI*1.5]]){const c=document.createElement('canvas');c.width=c.height=128;const ctx=c.getContext('2d');ctx.font='italic 500 66px Georgia';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#ddd9c8';ctx.fillText(text,64,68);const mat=new T.MeshBasicMaterial({map:new T.CanvasTexture(c),transparent:true,depthWrite:false});mesh(new T.PlaneGeometry(.33,.33),mat,model,Math.sin(a)*1.47,Math.cos(a)*1.47,.49);}
 const gears=[];
 function gear(x,y,r,teeth,z,speed){const g=new T.Group();g.position.set(x,y,z);model.add(g);const shape=new T.Shape();for(let j=0;j<teeth*4;j++){const a=j/(teeth*4)*Math.PI*2,rr=(j%4===1||j%4===2)?r:r-.055;const px=Math.cos(a)*rr,py=Math.sin(a)*rr;j?shape.lineTo(px,py):shape.moveTo(px,py);}shape.closePath();const hole=new T.Path();hole.absarc(0,0,r*.62,0,Math.PI*2,true);shape.holes.push(hole);mesh(new T.ExtrudeGeometry(shape,{depth:.075,bevelEnabled:true,bevelSize:.009,bevelThickness:.01,bevelSegments:1}),brass,g);disk(r*.21,.095,brass,g,0,0,.035);for(let i=0;i<6;i++){let spoke=box(.055,r*.73,.065,brass,g,0,0,.04,.01);const a=i*Math.PI/3;spoke.position.set(Math.sin(a)*r*.39,Math.cos(a)*r*.39,.04);spoke.rotation.z=-a;}disk(.09,.1,steel,g,0,0,.08);disk(.034,.115,ruby,g,0,0,.09);gears.push({g,speed});return g;}
 gear(-.77,.57,.61,36,.03,.06);gear(.23,.74,.41,24,.075,-.09);gear(.84,.23,.41,24,.02,.09);gear(.41,-.51,.44,26,.10,-.08308);gear(-.38,-.96,.47,28,.02,.07714);gear(-.65,-.13,.23,14,.15,-.1543);gear(1.11,-.59,.29,18,.05,.12);
