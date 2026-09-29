@@ -4,6 +4,7 @@
 <section class="viewer" aria-label="Interactive 3D mechanical watch"><canvas id="watch" tabindex="0" aria-label="3D watch. Drag to rotate, scroll or pinch to zoom. Use arrow keys to rotate and plus or minus to zoom."></canvas><div id="loading" role="status">Loading watch…</div></section>
 <div class="time-block"><div id="city-miniature"><canvas id="city" role="img" aria-label="Miniature 3D New York skyline"></canvas><span class="city-name">New York</span></div><span class="label">LOCAL TIME</span><time id="digital">—</time><span id="zone">Synchronizing…</span></div>
 <div class="view-tag" id="view-name">01 / SKELETON DIAL</div>
+<div class="inspection"><label for="opening">Open movement</label><input id="opening" type="range" min="0" max="100" value="0"><output id="opening-value" for="opening">0%</output><button id="slow" aria-pressed="false" title="Slow the mechanism; clock hands continue showing local time">Slow motion</button></div>
 <aside class="controls" aria-label="Watch controls"><div class="view-switch" role="group" aria-label="View"><button id="front" aria-pressed="true">Dial</button><button id="back" aria-pressed="false">Movement</button></div><button id="rotate" aria-pressed="false">Auto rotate <span>↻</span></button><button id="reset" aria-label="Reset view">Reset <span>↗</span></button></aside>
 <p class="gesture">Drag to rotate · Scroll or pinch to zoom</p>
 </main><noscript>This watch requires JavaScript. Please enable it to see the live 3D movement.</noscript><script type="module" src="/src/main.js"></script></body></html>
