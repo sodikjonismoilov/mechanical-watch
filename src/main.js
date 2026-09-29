@@ -4,6 +4,7 @@ import { configureWatchLighting, enableWatchShadows } from './lighting.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { clockAngles } from './clock.js';
 import { createMovement } from './movement.js';
+import { createCaseBody, createBezel, createLug } from './case.js';
 import '@fontsource/cormorant-garamond/500-italic.css';
 import '@fontsource/space-grotesk/400.css';
 import '@fontsource/space-grotesk/500.css';
@@ -31,11 +32,18 @@ function box(w,h,d,mat,parent,x,y,z,rad=.06){return mesh(new RoundedBoxGeometry(
 function screw(x,y,z,parent=model){disk(.082,.055,steel,parent,x,y,z);box(.11,.016,.008,dark,parent,x,y,z+.03,.004);}
 // Leather grain is procedural, with individually modeled edge stitches and strap holes.
 const leatherCanvas=document.createElement('canvas');leatherCanvas.width=leatherCanvas.height=256;const lc=leatherCanvas.getContext('2d');lc.fillStyle='#242728';lc.fillRect(0,0,256,256);let seed=7;for(let i=0;i<18000;i++){seed=(seed*16807)%2147483647;const x=seed%256;seed=(seed*16807)%2147483647;const y=seed%256;lc.fillStyle=i%2?'#343737':'#161b1c';lc.fillRect(x,y,1,2);}const texture=new T.CanvasTexture(leatherCanvas);texture.wrapS=texture.wrapT=T.RepeatWrapping;texture.repeat.set(2,4);texture.colorSpace=T.SRGBColorSpace;const grain=texture.clone();grain.colorSpace=T.NoColorSpace;const leather=new T.MeshStandardMaterial({map:texture,bumpMap:grain,bumpScale:.012,roughness:.88,color:0xb0aaa0});const thread=new T.MeshStandardMaterial({color:0x7b796a,roughness:1});
-for(const sign of [-1,1]){const strap=box(1.7,3.1,.22,leather,model,0,sign*3.3,-.15,.15);for(let j=0;j<21;j++)for(const x of [-.71,.71])box(.025,.076,.022,thread,model,x,sign*(2.02+j*.13),-.025,.01);for(const x of [-.95,.95]){const lug=box(.32,.85,.55,steel,model,x,sign*2.05,.05,.14);lug.rotation.z=-sign*Math.sign(x)*.13;}if(sign===-1)for(let j=0;j<5;j++){disk(.057,.024,dark,model,0,-3.15-j*.3,-.022);}else{ring(.15,.06,.12,steel,model,0,4.7,-.05);}}
+for(const sign of [-1,1]){const strap=box(1.7,3.1,.22,leather,model,0,sign*3.3,-.15,.15);for(let j=0;j<21;j++)for(const x of [-.71,.71])box(.025,.076,.022,thread,model,x,sign*(2.02+j*.13),-.025,.01);for(const x of [-.95,.95]){model.add(createLug(Math.sign(x),sign,steel));}if(sign===-1)for(let j=0;j<5;j++){disk(.057,.024,dark,model,0,-3.15-j*.3,-.022);}else{ring(.15,.06,.12,steel,model,0,4.7,-.05);}}
 box(1.82,.18,.28,steel,model,0,4.73,-.11);for(const x of [-.86,.86])box(.13,.7,.28,steel,model,x,4.45,-.1);box(.1,.65,.12,steel,model,0,4.46,.07);
 // Case, exhibition back and concentric bezel. Z faces the viewer.
-ring(2.06,.18,.61,brushed,model,0,0,0);ring(2.12,.12,.14,steel,model,0,0,.29);ring(2.02,.07,.08,brass,model,0,0,.38);ring(2.09,.13,.12,steel,model,0,0,-.32);ring(1.91,.14,.07,brushed,model,0,0,-.31);
-const crown=disk(.28,.38,steel,model,2.18,0,.02);crown.rotation.z=Math.PI/2;for(let i=0;i<36;i++){const a=i*Math.PI*2/36;const rib=box(.38,.025,.028,brushed,model,2.2,Math.cos(a)*.28,Math.sin(a)*.28+.02,.01);}disk(.1,.08,brass,model,2.4,0,.03).rotation.y=Math.PI/2;
+model.add(createCaseBody(brushed),createBezel(steel));ring(1.935,.025,.026,dark,model,0,0,.435);ring(2.09,.13,.12,steel,model,0,0,-.32);ring(1.91,.14,.07,brushed,model,0,0,-.31);
+// Recessed crown neck, rounded cap and axial grip flutes.
+const neck=disk(.15,.23,brushed,model,2.13,0,-.025);neck.rotation.set(0,0,Math.PI/2);
+const crown=disk(.245,.28,steel,model,2.32,0,-.025);crown.rotation.set(0,0,Math.PI/2);
+for(let i=0;i<40;i++){const a=i*Math.PI*2/40;box(.24,.018,.018,brushed,model,2.32,Math.cos(a)*.245,Math.sin(a)*.245-.025,.007);}
+const cap=mesh(new T.SphereGeometry(1,40,24),steel,model,2.465,0,-.025);cap.scale.set(.035,.223,.223);
+const crownInset=disk(.082,.008,blue,model,2.504,0,-.025);crownInset.rotation.set(0,0,Math.PI/2);
+// Spring bars join the straps between the lugs.
+for(const sign of [-1,1]){const pin=disk(.048,1.78,brushed,model,0,sign*2.23,-.03);pin.rotation.set(0,0,Math.PI/2);}
 const dialStart=model.children.length;
 ring(1.91,.23,.07,dark,model,0,0,.43);
 for(let i=0;i<60;i++){const a=i*Math.PI/30;const major=i%5===0;const mark=box(major?.065:.022,major?.22:.085,.035,major?lume:brass,model,Math.sin(a)*1.79,Math.cos(a)*1.79,.485,.009);mark.rotation.z=-a;}
